@@ -1,15 +1,15 @@
 FROM python:3.11-slim
 
+# Set working directory
 WORKDIR /app
 
-# Install essential packages and dependencies needed for Playwright
+# Install system dependencies for Playwright
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
     procps \
     unzip \
-    # Additional dependencies that Playwright might need
     libnss3 \
     libnspr4 \
     libatk1.0-0 \
@@ -19,39 +19,25 @@ RUN apt-get update && apt-get install -y \
     libxkbcommon0 \
     libxcomposite1 \
     libxdamage1 \
-    libxfixes3 \
     libxrandr2 \
     libgbm1 \
     libasound2 \
-    && apt-get clean \
+    libpangocairo-1.0-0 \
+    libxshmfence1 \
+    libx11-xcb1 \
+    xvfb \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first to leverage Docker cache
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
-# Copy the rest of the application
+# Copy the rest of the code
 COPY . .
 
-# Create a data directory with proper permissions
-RUN mkdir -p /app/data && chmod 777 /app/data
+# Expose the app port
+EXPOSE 24006
 
-# Expose the port the app runs on
-EXPOSE 8000
+# Start the app
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "24006"]
 
-# Create a non-root user to run the app
-RUN adduser --disabled-password --gecos "" appuser
-# Give appuser permissions to the necessary directories
-RUN chown -R appuser:appuser /app
-
-# Switch to appuser before installing browsers
-USER appuser
-
-# Install Playwright browsers
-RUN playwright install
-
-# Set healthcheck to ensure the service is running properly
-HEALTHCHECK --interval=30s --timeout=10s --retries=3 CMD curl -f http://localhost:8000/api/v1/ping || exit 1
-
-# Command to run the application
-CMD ["python", "app.py"] 
