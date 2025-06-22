@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Browser Use Local Bridge for n8n
 
 This is a local bridge service that enables n8n to communicate with the Browser Use Python library. It mimics the Browser Use Cloud API endpoints but runs locally, allowing you to execute browser automation tasks without relying on the cloud service.
@@ -149,3 +150,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 - [Browser Use](https://github.com/browser-use/browser-use) - The underlying browser automation library
 - [FastAPI](https://fastapi.tiangolo.com/) - The web framework used
 - [n8n](https://n8n.io/) - The workflow automation platform this bridge is designed for # browser-n8n-local
+=======
+# n8n-browseruse-cloud
+My cloud version of n8n-browseruse
+>>>>>>> 02306be452a3b42be8897868330b815440821fa3
